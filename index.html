@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>道歉信</title>
+<meta name="description" content="一封写给你的信">
+<style>
+  :root{
+    --bg1:#fdf7f2;
+    --bg2:#f9ebe5;
+    --bg3:#f2e2e4;
+    --paper:#fffdfa;
+    --ink:#4b403c;
+    --ink-soft:#7b6b65;
+    --accent:#c98b83;
+    --envelope-a:#f0d5cd;
+    --envelope-b:#e0b3a8;
+    --envelope-c:#cf9a8e;
+  }
+
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+
+  html,body{height:100%;}
+  body{
+    margin:0;
+    font-family:"LXGW WenKai","霞鹜文楷","Kaiti SC","STKaiti","KaiTi","楷体","Songti SC","STSong","SimSun",serif;
+    color:var(--ink);
+    background:
+      radial-gradient(1200px 700px at 20% -10%, #fff9f5 0%, transparent 60%),
+      linear-gradient(165deg,var(--bg1) 0%,var(--bg2) 45%,var(--bg3) 100%);
+    background-attachment:fixed;
+    overflow:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+  body.opened{overflow:auto;}
+
+  ::selection{background:#f6dcd5;color:#3a302c;}
+
+  /* ---------- 飘落的花瓣 ---------- */
+  .petals{position:fixed;inset:0;pointer-events:none;z-index:1;overflow:hidden;}
+  .petals i{
+    position:absolute;bottom:-40px;
+    font-style:normal;
+    color:var(--accent);
+    opacity:0;
+    animation:floatUp linear infinite;
+    will-change:transform,opacity;
+  }
+  @keyframes floatUp{
+    0%{transform:translate3d(0,0,0) rotate(0deg);opacity:0;}
+    12%{opacity:.28;}
+    85%{opacity:.16;}
+    100%{transform:translate3d(var(--dx,20px),-108vh,0) rotate(var(--rot,220deg));opacity:0;}
+  }
+
+  /* ---------- 信封封面 ---------- */
+  .cover{
+    position:fixed;inset:0;z-index:5;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:26px;
+    padding:24px;
+    transition:opacity .7s ease .45s, transform .7s ease .45s;
+    perspective:1200px;
+  }
+  body.opened .cover{opacity:0;pointer-events:none;transform:translateY(-30px);}
+
+  .envelope{
+    position:relative;
+    width:min(76vw,320px);
+    aspect-ratio:3/2;
+    cursor:pointer;
+    transition:transform .9s cubic-bezier(.22,.9,.28,1);
+    transform-style:preserve-3d;
+    filter:drop-shadow(0 18px 34px rgba(163,112,102,.28));
+  }
+  .envelope:hover{transform:translateY(-4px);}
+  body.opened .envelope{transform:translateY(-160px) rotate(-4deg) scale(.94);}
+
+  .env-body{
+    position:absolute;inset:0;
+    border-radius:8px;
+    background:linear-gradient(150deg,var(--envelope-a),var(--envelope-b));
+    overflow:hidden;
+  }
+  .env-body::after{ /* 信封内里的暗面 */
+    content:"";position:absolute;inset:0;
+    background:linear-gradient(180deg, rgba(180,120,110,.32) 0%, rgba(180,120,110,0) 46%);
+  }
+  .env-lines{
+    position:absolute;left:0;right:0;bottom:0;height:62%;
+    background:
+      linear-gradient(135deg, rgba(255,255,255,.35) 49.6%, rgba(0,0,0,.06) 50%),
+      linear-gradient(-135deg, rgba(255,255,255,.35) 49.6%, rgba(0,0,0,.06) 50%);
+    opacity:.7;
+  }
+
+  .flap{
+    position:absolute;top:0;left:0;right:0;height:56%;
+    background:linear-gradient(160deg,var(--envelope-c),var(--envelope-b));
+    clip-path:polygon(0 0,100% 0,50% 100%);
+    transform-origin:top center;
+    transition:transform .8s cubic-bezier(.4,0,.2,1) .15s, filter .8s ease;
+    border-radius:8px 8px 0 0;
+    z-index:2;
+  }
+  body.opened .flap{transform:rotateX(-168deg);filter:brightness(1.06);}
+
+  .wax{
+    position:absolute;left:50%;top:52%;
+    width:44px;height:44px;margin:-22px 0 0 -22px;
+    border-radius:50%;
+    background:radial-gradient(circle at 35% 32%, #e6a49b, #b86f65);
+    box-shadow:0 4px 10px rgba(140,80,72,.4), inset 0 1px 2px rgba(255,255,255,.45);
+    z-index:3;
+    display:flex;align-items:center;justify-content:center;
+    color:#fff6f2;font-size:18px;
+    transition:opacity .4s ease .5s, transform .6s ease .5s;
+  }
+  body.opened .wax{opacity:0;transform:scale(.6);}
+
+  .cover-title{
+    text-align:center;
+    animation:breathe 3.6s ease-in-out infinite;
+  }
+  .cover-title h1{
+    margin:0 0 10px;
+    font-size:clamp(26px,7.4vw,36px);
+    font-weight:600;
+    letter-spacing:.42em;
+    text-indent:.42em;
+    color:#5b4a45;
+  }
+  .cover-title p{
+    margin:0;
+    font-size:clamp(12.5px,3.4vw,14.5px);
+    letter-spacing:.22em;
+    text-indent:.22em;
+    color:var(--ink-soft);
+  }
+  .hint{
+    font-size:12.5px;letter-spacing:.24em;text-indent:.24em;
+    color:#a58b84;
+    animation:pulse 2.2s ease-in-out infinite;
+  }
+  @keyframes breathe{0%,100%{transform:translateY(0);}50%{transform:translateY(-5px);}}
+  @keyframes pulse{0%,100%{opacity:.45;}50%{opacity:.95;}}
+
+  /* ---------- 信纸 ---------- */
+  .wrap{
+    position:relative;z-index:2;
+    max-width:660px;
+    margin:0 auto;
+    padding:clamp(38px,7vw,74px) clamp(20px,5vw,26px) clamp(56px,10vw,90px);
+  }
+
+  .letter{
+    position:relative;
+    background:var(--paper);
+    border-radius:4px;
+    padding:clamp(30px,7.5vw,62px) clamp(22px,6vw,58px) clamp(38px,8vw,66px);
+    box-shadow:0 22px 60px rgba(158,108,98,.18), 0 2px 0 rgba(255,255,255,.7) inset;
+    opacity:0;
+    transform:translateY(46px) scale(.975);
+  }
+  .letter::before{ /* 纸张左侧淡淡的竖线 */
+    content:"";position:absolute;left:clamp(12px,3.4vw,26px);top:34px;bottom:34px;width:1px;
+    background:linear-gradient(180deg,transparent,rgba(201,139,131,.32),transparent);
+  }
+  body.opened .letter{animation:letterIn 1.05s cubic-bezier(.22,.85,.3,1) .5s both;}
+  @keyframes letterIn{
+    from{opacity:0;transform:translateY(46px) scale(.975);}
+    to{opacity:1;transform:translateY(0) scale(1);}
+  }
+
+  .letter-head{text-align:center;margin:0 0 34px;}
+  .letter-head h1{
+    margin:0 0 12px;
+    font-size:clamp(21px,5.6vw,27px);
+    font-weight:600;
+    letter-spacing:.36em;
+    text-indent:.36em;
+    color:#5b4a45;
+  }
+  .divider{
+    display:flex;align-items:center;justify-content:center;gap:10px;
+    color:rgba(201,139,131,.6);
+  }
+  .divider span{height:1px;width:clamp(38px,14vw,74px);background:currentColor;}
+  .divider i{font-style:normal;font-size:9px;transform:rotate(45deg);}
+
+  .letter p{
+    margin:0 0 1.05em;
+    font-size:clamp(15.5px,4.3vw,17.4px);
+    line-height:2.02;
+    letter-spacing:.022em;
+    text-indent:2em;
+    color:var(--ink);
+    text-align:justify;
+  }
+  .letter p.salute{text-indent:0;margin-bottom:1.3em;}
+  .letter p.fade{color:var(--ink-soft);}
+
+  .sign{
+    margin-top:clamp(34px,8vw,52px);
+    text-align:right;
+  }
+  .sign .name{
+    margin:0 0 6px;
+    font-size:clamp(17px,4.6vw,19px);
+    letter-spacing:.3em;
+    text-indent:.3em;
+    color:#5b4a45;
+  }
+  .sign .date{
+    margin:0;
+    font-size:clamp(12.5px,3.4vw,14px);
+    letter-spacing:.14em;
+    color:var(--ink-soft);
+  }
+
+  .tail{
+    margin-top:clamp(30px,7vw,46px);
+    padding-top:20px;
+    border-top:1px dashed rgba(201,139,131,.35);
+    text-align:center;
+    font-size:12.5px;line-height:2;
+    letter-spacing:.16em;
+    color:#ab918a;
+  }
+
+  /* 逐段浮现 */
+  .reveal{opacity:0;}
+  body.opened .reveal{animation:fadeUp .95s cubic-bezier(.22,.85,.3,1) both;}
+  @keyframes fadeUp{
+    from{opacity:0;transform:translateY(14px);}
+    to{opacity:1;transform:translateY(0);}
+  }
+
+  @media (max-width:380px){
+    .letter p{line-height:1.95;}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation-duration:.01ms !important;transition-duration:.01ms !important;}
+  }
+</style>
+</head>
+<body>
+
+<!-- 花瓣 -->
+<div class="petals" id="petals" aria-hidden="true"></div>
+
+<!-- 信封封面 -->
+<div class="cover" id="cover" role="button" tabindex="0" aria-label="打开这封信">
+  <div class="cover-title">
+    <h1>道歉信</h1>
+    <p>致 你 · 一封迟到的信</p>
+  </div>
+  <div class="envelope" id="envelope">
+    <div class="env-body"><div class="env-lines"></div></div>
+    <div class="flap"></div>
+    <div class="wax">✿</div>
+  </div>
+  <div class="hint">轻触，打开这封信</div>
+</div>
+
+<!-- 信纸 -->
+<main class="wrap">
+  <article class="letter" id="letter">
+
+    <div class="letter-head">
+      <h1>道歉信</h1>
+      <div class="divider"><span></span><i>◆</i><span></span></div>
+    </div>
+
+    <p class="salute reveal">亲爱的你：</p>
+
+    <p class="reveal">写这些字的时候，我删删改改了很多遍。最后发现，最想说的，其实还是最简单的那三个字——对不起。</p>
+
+    <p class="reveal">对不起，这段时间让你受委屈了；也对不起，这封信来得太晚。</p>
+
+    <p class="reveal">谢谢你陪我走过的这一个月。</p>
+
+    <p class="reveal">这一个月里，我第一次这么真切地知道，被人惦记是什么感觉。是你记得我随口说过的一句话，是在我没想到的时刻收到你的消息，是你让我明白——原来被人放在心上，是这么踏实、又这么让人贪心的一件事。那些有你的日子，我是真的开心，也是真的幸福。</p>
+
+    <p class="reveal">我承认，我就是爱胡思乱想。会因为一点点小事吃醋，会反复看你的每一条动态，会在你晚回消息的那几分钟里，在心里编出一百种故事。说到底，不是因为我不信任你，是因为我太喜欢你了。喜欢到有点笨拙，喜欢到把自己的情绪都系在你身上。这是我做得不好的地方，也谢谢你还愿意包容我那么久。</p>
+
+    <p class="reveal">我也很抱歉，能陪你的时间真的太少。很多你可能需要我的时刻，我都不在。</p>
+
+    <p class="reveal">有件事我一直没跟你讲清楚。这段时间我在备赛，压力比想象中大得多。在学校的生活其实就是食堂、教室、宿舍、图书馆，四点一线，单调得像复制粘贴。压力也挺大的，最近有点忙不过来，基本上都是一个人独处的时间多。说个搞笑的，电脑键盘的键都被我敲坏了，哈哈哈哈哈。有时候练到很晚，回寝室往床上一躺，还得继续打开我的笔记本，连话都不想说一句。</p>
+
+    <p class="reveal">我不是不想陪你，我是真的在拼。我想的是，如果以后我们还能在一起，我希望给你的，不只是一句“我喜欢你”，而是更踏实的生活——不用为钱发愁，不用为选择将就，你喜欢的东西我能很自然地买给你，而不是让你在“喜欢”和“划算”之间犹豫。所以那些没能陪你的时间，我都拿去努力了。只是现在，好像等不到我把这些都兑现的那天了。</p>
+
+    <p class="reveal">可你不知道的是，你的喜好我都偷偷记着——你爱吃的、不爱吃的、怕冷的、容易累的，我一直都记得。只是好像，以后没什么机会再照顾你了。并且我从来都不在乎你的过去，只是当时有点没缓过神。</p>
+
+    <p class="reveal">这两天想了很久，我们好像真的走到了那个分岔口。</p>
+
+    <p class="reveal">我不觉得分开是谁的错。有些人出现在你生命里，不是为了陪你走到最后，而是为了让你在某个阶段，看见更好的自己。所以我不怪你，也不怪这段关系。我只是有点遗憾，也有很多很多舍不得。</p>
+
+    <p class="reveal">月初了，你要来生理期了，答应我好好照顾自己诶。那几天别喝冷的、别碰辛辣的，肚子疼别硬撑，热水和暖宝宝记得提前备着。天也转凉了，出门多带件外套，别为了好看冻着自己。这些话我可能没资格再当面唠叨了，但请你一定要听，好不好。</p>
+
+    <p class="reveal">很高兴认识你。真的，很高兴。</p>
+
+    <p class="reveal">愿你以后遇到的那个人，比我更懂你、也更有时间陪你；愿你被这个世界温柔以待，愿你的每一天，都像你笑起来的时候那样好看。</p>
+
+    <p class="reveal">祝你一切都好。这一次，是真的再见啦。</p>
+
+    <div class="sign reveal">
+      <p class="name">叶 子</p>
+      <p class="date">2026年10月1日</p>
+    </div>
+
+    <div class="tail reveal">
+      很高兴认识你 · 那段有你的日子，我会好好收着
+    </div>
+
+  </article>
+</main>
+
+<script>
+  // 飘落的花瓣
+  (function(){
+    var box = document.getElementById('petals');
+    var n = window.innerWidth < 480 ? 8 : 13;
+    for (var i = 0; i < n; i++) {
+      var s = document.createElement('i');
+      var size = 9 + Math.random() * 12;
+      s.textContent = Math.random() > .5 ? '✿' : '❀';
+      s.style.left = (Math.random() * 100) + 'vw';
+      s.style.fontSize = size.toFixed(1) + 'px';
+      s.style.setProperty('--dx', (Math.random() * 120 - 60).toFixed(0) + 'px');
+      s.style.setProperty('--rot', (Math.random() * 480 - 240).toFixed(0) + 'deg');
+      s.style.animationDuration = (16 + Math.random() * 16).toFixed(1) + 's';
+      s.style.animationDelay = (-Math.random() * 26).toFixed(1) + 's';
+      box.appendChild(s);
+    }
+  })();
+
+  // 逐段浮现的节奏
+  (function(){
+    var items = document.querySelectorAll('.letter .reveal');
+    items.forEach(function(el, i){
+      el.style.animationDelay = (0.75 + i * 0.085).toFixed(3) + 's';
+    });
+  })();
+
+  // 打开信封
+  function openLetter(){
+    if (document.body.classList.contains('opened')) return;
+    document.body.classList.add('opened');
+    setTimeout(function(){
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 500);
+  }
+
+  var cover = document.getElementById('cover');
+  cover.addEventListener('click', openLetter);
+  cover.addEventListener('keydown', function(e){
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openLetter(); }
+  });
+  document.getElementById('envelope').addEventListener('click', function(e){
+    e.stopPropagation(); openLetter();
+  });
+</script>
+</body>
+</html>
